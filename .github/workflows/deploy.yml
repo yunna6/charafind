@@ -1,0 +1,63 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个发布，避免两次 push 抢部署
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # 项目站点挂在 /<repo>/ 下；若仓库名是 <user>.github.io 则挂在根路径
+      - id: base
+        run: |
+          name="${GITHUB_REPOSITORY#*/}"
+          if [[ "$name" == *.github.io ]]; then
+            echo "base=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "base=/$name/" >> "$GITHUB_OUTPUT"
+          fi
+          echo "构建子路径：$(grep base= "$GITHUB_OUTPUT")"
+
+      # VITE_DEMO=1 走只读快照数据层：Pages 域名不在云服务 Origin 白名单里
+      - name: Build
+        env:
+          VITE_DEMO: '1'
+          BASE_PATH: ${{ steps.base.outputs.base }}
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
