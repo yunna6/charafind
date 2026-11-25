@@ -10,8 +10,10 @@
 
 | 形态 | 地址 | 说明 |
 | --- | --- | --- |
-| **静态演示版**（GitHub Pages） | `https://<用户名>.github.io/charafind/` | 全部浏览功能可用，数据为构建时的只读快照 |
+| **静态演示版**（GitHub Pages） | https://yunna6.github.io/charafind/ | 全部浏览功能可用，数据为构建时的只读快照 |
 | **完整版**（可登录互动） | https://charafind.app.workbuddy.host/?sharecode=QJ7XR3VUWS | 登录、点赞、收藏、评论、投稿、审核、管理台 |
+
+源码仓库：https://github.com/yunna6/charafind
 
 ---
 
@@ -50,7 +52,7 @@ VITE_DEMO=1 BASE_PATH=/charafind/ npm run build
 
 1. 仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**；
 2. push 到 `main`，或手动运行 `Deploy to GitHub Pages` 工作流；
-3. 首次发布后地址为 `https://<用户名>.github.io/<仓库名>/`。
+3. 首次发布后地址为 `https://yunna6.github.io/charafind/`（本项目已按此配置）。
 
 工作流会自动判断子路径（仓库名形如 `<用户名>.github.io` 时用根路径），并以 `VITE_DEMO=1` 构建。
 
@@ -161,7 +163,7 @@ git commit -am "chore: 更新演示快照"
 
 ```
 GET https://charafind.app.workbuddy.host/.cloud/database/rest/works
-  Origin: https://<用户名>.github.io
+  Origin: https://yunna6.github.io
 → 403 {"error":"access_denied",
        "error_description":"the request origin is not allowed for this client"}
 ```
